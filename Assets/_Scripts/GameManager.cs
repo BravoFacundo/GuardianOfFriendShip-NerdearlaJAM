@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private bool includeRescueMisions;
     [SerializeField] private int startAtRound;
     private bool forceStartRound = true;
+    private static bool tutorialCompleted; // Survives scene reloads: skip the tutorial after the first run
 
     [Header ("Score")]
     public int desviatedMeteors;
@@ -29,6 +30,7 @@ public class GameManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private RadarManager radarManager;
     [SerializeField] private CharacterController characterController;
+    [SerializeField] private MusicManager musicManager;
     private Transform currentPlayerBodyTransform;
 
     [Header("Tutorial References")]
@@ -49,7 +51,7 @@ public class GameManager : MonoBehaviour
 
         //NewRoundOfAsteroids(5);
 
-        if (dontStartWithTutorial) buttonPressedCounter = 6;
+        if (dontStartWithTutorial || tutorialCompleted) buttonPressedCounter = 6;
 
         StartCoroutine(nameof(ShowTutorialScreen), new Vector2(0, 1f));
     }
@@ -71,6 +73,7 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         roundAlert.SetActive(true);
+        musicManager.SetAlert(true);
         yield return new WaitForSeconds(2.7f);
         roundAlert.SetActive(false);
 
@@ -82,8 +85,10 @@ public class GameManager : MonoBehaviour
             newMeteor.transform.position = Random.insideUnitCircle.normalized * Random.Range(15, 17);
             newMeteor.GetComponent<AsteroidBehaviour>().playerTransform = currentPlayerBodyTransform;
             radarManager.CreateArrowForTarget(newMeteor);
+            musicManager.TrackThreat(newMeteor);
             yield return new WaitForSeconds(Random.Range(0.5f, 2f));
         }
+        musicManager.SetAlert(false); // From here tension follows the meteors still alive
 
         switch (roundsSurvived)
         {
@@ -183,6 +188,7 @@ public class GameManager : MonoBehaviour
             newMeteor.transform.position = new Vector2(13, 0);
             newMeteor.GetComponent<AsteroidBehaviour>().playerTransform = currentPlayerBodyTransform;
             radarManager.CreateArrowForTarget(newMeteor);
+            musicManager.TrackThreat(newMeteor);
             yield return new WaitForSeconds(3.5f);
             newMeteor.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
             tutorialMeteor = newMeteor;
@@ -221,6 +227,7 @@ public class GameManager : MonoBehaviour
                     delayTime = 15f;
                     break;
                 case 7:
+                    tutorialCompleted = true;
                     StartCoroutine(nameof(HideTutorialScreen));
                     StartCoroutine(nameof(CheckIfRoundEnded), 1f);
                     //NewRoundOfAsteroids(2);
@@ -257,11 +264,12 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(5.5f);
         looseAlert.SetActive(true);
+        musicManager.PlayOutro();
         yield return new WaitForSeconds(2.7f);
         looseAlert.SetActive(false);
         creditsAlert.SetActive(true);
         yield return new WaitForSeconds(7.5f);
-        SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reload current scene (name-independent)
     }
 
     public void Win()
@@ -273,11 +281,12 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         winAlert.SetActive(true);
+        musicManager.PlayOutro();
         yield return new WaitForSeconds(2.7f);
         winAlert.SetActive(false);
         creditsAlert.SetActive(true);
         yield return new WaitForSeconds(7.5f);
-        SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reload current scene (name-independent)
     }
 
 
