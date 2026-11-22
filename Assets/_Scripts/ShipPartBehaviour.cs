@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ShipPartBehaviour : MonoBehaviour
 {
+    public static event System.Action<int> HitPointsChanged; // Remaining hull hits, for the HUD
+
     private Rigidbody2D rb;
     private int totalHitPoints = 3;
     [SerializeField] private int currentHitPoints = 3;
@@ -44,6 +46,7 @@ public class ShipPartBehaviour : MonoBehaviour
         {
             //Debug.Log("Hit");
             currentHitPoints--;
+            HitPointsChanged?.Invoke(Mathf.Max(currentHitPoints, 0));
 
             collision.transform.tag = "Ship";
             collision.gameObject.GetComponent<AsteroidBehaviour>().Explode();

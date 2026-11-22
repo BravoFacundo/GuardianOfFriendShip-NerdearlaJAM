@@ -12,6 +12,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int startAtRound;
     private bool forceStartRound = true;
     private static bool tutorialCompleted; // Survives scene reloads: skip the tutorial after the first run
+    private const int TotalRounds = 4;
+    private const string MutedKey = "Muted";
+    private bool isPaused;
+    private bool isGameOver;
 
     [Header ("Score")]
     public int desviatedMeteors;
@@ -31,6 +35,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private RadarManager radarManager;
     [SerializeField] private CharacterController characterController;
     [SerializeField] private MusicManager musicManager;
+    [SerializeField] private UIManager uiManager; // Optional: game runs without HUD if empty
     private Transform currentPlayerBodyTransform;
 
     [Header("Tutorial References")]
@@ -49,6 +54,11 @@ public class GameManager : MonoBehaviour
     {
         currentPlayerBodyTransform = characterController.physicalGO.transform;
 
+        // Static engine state survives scene reloads: reset it
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+        ApplyMute(PlayerPrefs.GetInt(MutedKey, 0) == 1);
+
         //NewRoundOfAsteroids(5);
 
         if (dontStartWithTutorial || tutorialCompleted) buttonPressedCounter = 6;
@@ -58,7 +68,38 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P)) TogglePause();
+        if (Input.GetKeyDown(KeyCode.M)) ToggleMute();
+        if (isGameOver && Input.GetKeyDown(KeyCode.R)) Retry();
+    }
+
+    public void TogglePause()
+    {
+        if (isGameOver) return;
+        isPaused = !isPaused;
+        Time.timeScale = isPaused ? 0f : 1f;
+        AudioListener.pause = isPaused;
+        if (uiManager != null) uiManager.SetPause(isPaused);
+    }
+
+    public void ToggleMute()
+    {
+        bool muted = PlayerPrefs.GetInt(MutedKey, 0) == 0;
+        PlayerPrefs.SetInt(MutedKey, muted ? 1 : 0);
+        PlayerPrefs.Save();
+        ApplyMute(muted);
+    }
+
+    private void ApplyMute(bool muted)
+    {
+        AudioListener.volume = muted ? 0f : 1f;
+        if (uiManager != null) uiManager.SetMuted(muted);
+    }
+
+    public void Retry()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reload current scene (name-independent)
     }
 
     public void NewRoundOfAsteroids(int asteroidNumber)
@@ -74,6 +115,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(2f);
         roundAlert.SetActive(true);
         musicManager.SetAlert(true);
+        if (uiManager != null) uiManager.SetRound(roundsSurvived, TotalRounds);
         yield return new WaitForSeconds(2.7f);
         roundAlert.SetActive(false);
 
@@ -262,14 +304,13 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator Perdiste()
     {
-        yield return new WaitForSeconds(5.5f);
+        isGameOver = true;
+        yield return new WaitForSeconds(3f);
         looseAlert.SetActive(true);
         musicManager.PlayOutro();
         yield return new WaitForSeconds(2.7f);
         looseAlert.SetActive(false);
-        creditsAlert.SetActive(true);
-        yield return new WaitForSeconds(7.5f);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reload current scene (name-independent)
+        if (uiManager != null) uiManager.ShowRetry(); // Credits only on win: retry right away
     }
 
     public void Win()
@@ -279,14 +320,14 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator Ganaste()
     {
+        isGameOver = true;
         yield return new WaitForSeconds(1f);
         winAlert.SetActive(true);
         musicManager.PlayOutro();
         yield return new WaitForSeconds(2.7f);
         winAlert.SetActive(false);
         creditsAlert.SetActive(true);
-        yield return new WaitForSeconds(7.5f);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reload current scene (name-independent)
+        if (uiManager != null) uiManager.ShowRetry();
     }
 
 

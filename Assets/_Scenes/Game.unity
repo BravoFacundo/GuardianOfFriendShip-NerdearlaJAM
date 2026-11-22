@@ -3198,7 +3198,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: d63eddc5a01f2a446b6a38ee402dac94, type: 3}
-  m_Color: {r: 1, g: 0.88851553, b: 0.5991423, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3671,7 +3671,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: 1a3c8c0ecbe76b54f95ccc3cc7697ef4, type: 3}
-  m_Color: {r: 1, g: 0.5897084, b: 0.76880324, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -6880,7 +6880,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 4
   m_Sprite: {fileID: 21300000, guid: 8e9d1c658e03cc941bf2b7e0bb76a5f9, type: 3}
-  m_Color: {r: 0.9150943, g: 0.8213403, b: 0.57417065, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -10065,6 +10065,7 @@ MonoBehaviour:
   radarManager: {fileID: 1002691688}
   characterController: {fileID: 288101553}
   musicManager: {fileID: 152065389}
+  uiManager: {fileID: 0}
   canvasAlert: {fileID: 1927330860}
   alertInfo: {fileID: 1023081899}
   alertButton: {fileID: 735168363}
@@ -11614,7 +11615,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: 73557b564c8d5ca43ad36c496fbb1006, type: 3}
-  m_Color: {r: 0.25008577, g: 0.90762347, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -15350,7 +15351,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 8e9d1c658e03cc941bf2b7e0bb76a5f9, type: 3}
-  m_Color: {r: 0.9150943, g: 0.8213403, b: 0.57417065, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
@@ -17650,7 +17651,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: f76f3866518825345a956886a78a3c3e, type: 3}
-  m_Color: {r: 0.438765, g: 1, b: 0.6802545, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
